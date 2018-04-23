@@ -1,46 +1,26 @@
 <template>
 	<div>
     <div class="col-large push-top">
-
         <h1>{{thread.title}}</h1>
-
-        <div class="post-list">
-
-            <div v-for="postId in thread.posts"
-                 class="post">
-
-                <div class="user-info">
-                    <a href="#" class="user-name">{{users[posts[postId].userId].name}}</a>
-
-                    <a href="#">
-                        <img class="avatar-large" :src="users[posts[postId].userId].avatar" alt="">
-                    </a>
-
-                    <p class="desktop-only text-small">107 posts</p>
-
-                </div>
-
-                <div class="post-content">
-                    <div>
-                      {{posts[postId].text}}
-                    </div>
-                </div>
-
-
-
-                <div class="post-date text-faded">
-                    {{posts[postId].publishedAt}}
-                </div>
-
-            </div>
-        </div>
+				<PostList :posts="posts"/>
+				<PostEditor
+					@save="addPost"
+					:threadId="id"
+				/>
     </div>
-  </div>	
+  </div>
 </template>
 
 <script>
 	import sourceData from '@/data'
+	import PostList from '@/components/PostList'
+	import PostEditor from '@/components/PostEditor'
 	export default {
+		components: {
+			PostList,
+			PostEditor
+		},
+
 		props: {
 			id: {
 				required: true,
@@ -50,9 +30,23 @@
 
 		data () {
 			return {
-				thread: sourceData.threads[this.id],
-				posts: sourceData.posts,
-				users: sourceData.users
+				thread: sourceData.threads[this.id]
+			}
+		},
+
+		computed: {
+			posts () {
+				const postIds = Object.values(this.thread.posts)
+				return Object.values(sourceData.posts)
+					.filter(post => postIds.includes(post['.key']))
+			}
+		},
+		methods: {
+			addPost ({post}) {
+				const postId = post['.key']
+				this.$set(sourceData.posts, postId, post)
+	      this.$set(this.thread.posts, postId, postId)
+	      this.$set(sourceData.users[post.userId].posts, postId, postId)
 			}
 		}
 	}
