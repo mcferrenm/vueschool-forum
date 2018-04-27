@@ -29,8 +29,7 @@
 </template>
 
 <script>
-	
-
+	import {countObjectProperties} from '@/utils'
 	export default {
 
 		props: {
