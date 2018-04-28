@@ -17,6 +17,7 @@ export default new Vuex.Store({
       post.userId = state.authId
       post.publishedAt = Math.floor(Date.now() / 1000)
 
+      
       commit('setPost', {post, postId})
       commit('appendPostToThread', {threadId: post.threadId, postId})
       commit('appendPostToUser', {userId: post.userId, postId})
