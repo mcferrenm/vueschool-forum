@@ -27,6 +27,7 @@
       </div>
 
       <div class="post-date text-faded">
+          <div v-if="post.edited" class="edition-edited">edited</div>
           <AppDate :timestamp="post.publishedAt"/>
       </div>
       
