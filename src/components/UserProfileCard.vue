@@ -20,7 +20,7 @@
 
 
                   <div class="stats">
-                      <span>{{userPostCount}}</span>
+                      <span>{{userPostsCount}}</span>
                       <span>{{userThreadCount}}</span>
                   </div>
 
@@ -51,14 +51,16 @@ export default {
     user: {
       required: true,
       type: Object
+    }
+  },
+
+  computed: {
+    userThreadCount () {
+      return this.$store.getters.userThreadsCount(this.user['.key'])
     },
-    userPostCount: {
-      required: true,
-      type: Number
-    },
-    userThreadCount: {
-      required: true,
-      type: Number
+
+    userPostsCount () {
+      return this.$store.getters.userPostsCount(this.user['.key'])
     }
   }
 }
