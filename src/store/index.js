@@ -9,7 +9,7 @@ const makeAppendChildToParentMutation = ({parent, child}) =>
   (state, {childId, parentId}) => {
     const resource = state[parent][parentId]
     if (!resource[child]) {
-      Vue.set(resource, child, {})
+      Vue.set(resource, child, {})  
     }
     Vue.set(resource[child], childId, childId)
 }
@@ -101,7 +101,8 @@ export default new Vuex.Store({
     },
 
     userThreadsCount: state => id => countObjectProperties(state.users[id].threads),
-    userPostsCount: state => id => countObjectProperties(state.users[id].posts)
+    userPostsCount: state => id => countObjectProperties(state.users[id].posts),
+    threadRepliesCount: state => id => countObjectProperties(state.threads[id].posts) - 1
   },
 
   mutations: {
