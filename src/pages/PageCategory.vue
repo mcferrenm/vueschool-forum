@@ -1,11 +1,11 @@
 <template>
-  <div class="col-full">
+  <div v-if="category" class="col-full">
       <CategoryListItem :category="category"/>
-      {{ category.name }}
   </div>
 </template>
 
 <script>
+import {mapActions} from 'vuex'
 import CategoryListItem from '@/components/CategoryListItem'
 export default {
     components: {
@@ -23,6 +23,17 @@ export default {
         category () {
             return this.$store.state.categories[this.id]
         }
+    },
+
+    methods: {
+        ...mapActions(['fetchCategory', 'fetchForums'])
+    },  
+
+    created () {
+        this.fetchCategory({id: this.id})
+            .then(category => {
+                this.fetchForums({ids: category.forums})
+            })
     }
   
 }
