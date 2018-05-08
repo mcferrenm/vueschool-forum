@@ -59,36 +59,43 @@ export default {
     updateThread ({state, commit, dispatch}, {title, text, id}) {
       return new Promise ((resolve, reject) => {
       const thread = state.threads[id]
-      // const post = state.posts[thread.firstPostId]
+      const post = state.posts[thread.firstPostId]
+      
+        const edited = {
+          at: Math.floor(Date.now() / 1000),
+          by: state.authId
+        }
 
-      const newThread = {...thread, title}
-      // const newPost = {...post, text}
+        const updates = {}
+        updates[`posts/${thread.firstPostId}/text`] = text
+        updates[`posts/${thread.firstPostId}/edited`] = edited
+        updates[`threads/${id}/title`] = title
 
-      commit('setThread', {thread: newThread, threadId: id})
-      // commit('setPost', {post: newPost, postId: thread.firstPostId })
-
-      dispatch('updatePost', {id: thread.firstPostId, text})
-        .then(() => {
-          resolve(newThread)
-        })
+        firebase.database().ref().update(updates)
+          .then(() => {
+            commit('setThread', {thread: {...thread, title}, threadId: id})
+            commit('setPost', { postId: thread.firstPostId, post: { ...post, text, edited } })
+            resolve(post)
+          })
       })
     },
+
+    
 
     updatePost ({state, commit}, {id, text}) {
       return new Promise((resolve, reject) => {
         const post = state.posts[id]
-        commit('setPost', {
-          postId: id, 
-          post: {
-            ...post, 
-            text,
-            edited: {
-              at: Math.floor(Date.now() / 1000),
-              by: state.authId
-            }
-          }
-        })
-        resolve(post)
+        const edited = {
+          at: Math.floor(Date.now() / 1000),
+          by: state.authId
+        }
+
+        const updates = {text, edited}
+        firebase.database().ref('posts').child(id).update(updates)
+          .then(() => {
+            commit('setPost', { postId: id, post: { ...post, text, edited } })
+            resolve(post)
+          })
       })
     },
 
