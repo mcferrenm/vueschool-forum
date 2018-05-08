@@ -146,7 +146,7 @@ export default {
         firebase.database().ref(resource).child(id).once('value', snapshot => {
           const item = snapshot.val()
           commit('setItem', {resource, id: snapshot.key, item: snapshot.val()})
-          setTimeout(() => resolve(state[resource][id]), 1000)
+          return resolve(state[resource][id])
         })
       })
     },
